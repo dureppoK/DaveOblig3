@@ -234,20 +234,12 @@ export default function CalendarTodo() {
           ...(goalTask ? { end: getDayAfterDate(task.endDate) } : {}),
           allDay: true,
           backgroundColor: completed
-            ? "#dcfce7"
+            ? "#eaff00"
             : goalTask
-              ? "#fef3c7"
-              : "#dbeafe",
-          borderColor: completed
-            ? "#86efac"
-            : goalTask
-              ? "#fcd34d"
-              : "#93c5fd",
-          textColor: completed
-            ? "#166534"
-            : goalTask
-              ? "#92400e"
-              : "#1d4ed8",
+              ? "#eaff00"
+              : "#e5e5e2",
+          borderColor: "#222222",
+          textColor: "#111111",
         };
       }),
     [tasks]
@@ -368,7 +360,7 @@ export default function CalendarTodo() {
 
   if (!hydrated) {
     return (
-      <main className="min-h-screen bg-slate-50 p-6">
+      <main className="daylist-shell min-h-screen bg-slate-50 p-6">
         <div className="mx-auto max-w-6xl animate-pulse">
           <div className="h-8 w-48 rounded bg-slate-200" />
           <div className="mt-6 h-32 rounded-2xl bg-white" />
@@ -378,7 +370,7 @@ export default function CalendarTodo() {
   }
 
   return (
-    <main className="min-h-screen bg-slate-50 text-slate-900">
+    <main className="daylist-shell min-h-screen bg-slate-50 text-slate-900">
       <header className="border-b border-slate-200 bg-white">
         <div className="mx-auto flex max-w-6xl items-center justify-between px-5 py-4">
           <div className="flex items-center gap-3">
@@ -685,7 +677,7 @@ export default function CalendarTodo() {
                       <Target
                         size={22}
                         aria-hidden="true"
-                        className="shrink-0 text-amber-600"
+                        className="shrink-0 text-slate-900"
                       />
 
                       <div className="min-w-0 flex-1">

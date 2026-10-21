@@ -1,4 +1,3 @@
-
 @import "@fullcalendar/react/skeleton.css";
 @import "@fullcalendar/react/themes/classic/theme.css";
 @import "@fullcalendar/react/themes/classic/palette.css";
@@ -6,16 +5,41 @@
 
 :root {
   color-scheme: light;
+  --paper: #f2f2f0;
+  --paper-raised: #f8f8f6;
+  --ink: #111111;
+  --muted: #545451;
+  --line: #222222;
+  --neon: #eaff00;
+  --fc-classic-button: var(--ink);
+  --fc-classic-button-border: var(--ink);
+  --fc-classic-button-strong: var(--neon);
+  --fc-classic-button-strong-border: var(--ink);
+  --fc-classic-button-foreground: var(--paper-raised);
+  --fc-classic-primary: var(--ink);
+  --fc-classic-primary-foreground: var(--paper-raised);
+  --fc-classic-event: var(--ink);
+  --fc-classic-event-contrast: var(--neon);
+  --fc-classic-highlight: var(--neon);
+  --fc-classic-today: var(--neon);
+  --fc-classic-background: var(--paper-raised);
+  --fc-classic-faint: #e5e5e2;
+  --fc-classic-muted: #d6d6d2;
+  --fc-classic-border: var(--line);
+  --fc-classic-foreground: var(--ink);
+  --fc-classic-muted-foreground: var(--muted);
 }
 
 * {
   box-sizing: border-box;
+  letter-spacing: 0;
 }
 
 body {
   margin: 0;
-  background: #f8fafc;
-  font-family: Arial, Helvetica, sans-serif;
+  background: var(--paper);
+  color: var(--ink);
+  font-family: "Courier New", Courier, monospace;
 }
 
 button,
@@ -27,134 +51,154 @@ button {
   cursor: pointer;
 }
 
+.daylist-shell {
+  min-height: 100vh;
+  background: var(--paper);
+  color: var(--ink);
+  font-family: "Courier New", Courier, monospace;
+}
+
+.daylist-shell h1,
+.daylist-shell h2,
+.daylist-shell h3 {
+  color: var(--ink);
+  font-family: "Courier New", Courier, monospace;
+  font-weight: 700;
+  letter-spacing: 0;
+  text-transform: uppercase;
+}
+
+.daylist-shell .text-slate-400,
+.daylist-shell .text-slate-500 {
+  color: var(--muted);
+}
+
+.daylist-shell .text-slate-700,
+.daylist-shell .text-slate-800,
+.daylist-shell .text-slate-900 {
+  color: var(--ink);
+}
+
+.daylist-shell .text-blue-600 {
+  color: var(--ink);
+}
+
+.daylist-shell .bg-blue-600 {
+  background-color: var(--neon);
+  color: var(--ink);
+}
+
+.daylist-shell .bg-slate-50,
+.daylist-shell .bg-white {
+  background-color: var(--paper-raised);
+}
+
+.daylist-shell .bg-blue-50,
+.daylist-shell .border-blue-100 {
+  background-color: var(--paper-raised);
+  border-color: var(--line);
+}
+
+.daylist-shell .bg-amber-100,
+.daylist-shell .bg-amber-200,
+.daylist-shell .bg-amber-500 {
+  background-color: var(--neon);
+}
+
+.daylist-shell .text-amber-800 {
+  color: var(--ink);
+}
+
+.daylist-shell .border-slate-100,
+.daylist-shell .border-slate-200,
+.daylist-shell .border-slate-300 {
+  border-color: var(--line);
+}
+
+.daylist-shell .rounded-2xl,
+.daylist-shell .rounded-xl,
+.daylist-shell .rounded-lg,
+.daylist-shell .rounded-md,
+.daylist-shell .rounded-full {
+  border-radius: 2px;
+}
+
+.daylist-shell .shadow-sm {
+  box-shadow: none;
+}
+
+.daylist-shell section {
+  border-color: var(--line);
+  background-color: var(--paper-raised);
+  box-shadow: none;
+}
+
+.daylist-shell header {
+  border-color: var(--line);
+  background-color: var(--paper);
+}
+
+.daylist-shell button.bg-blue-600 {
+  border: 1px solid var(--ink);
+  border-radius: 2px;
+  background-color: var(--ink);
+  color: var(--neon);
+  box-shadow: none;
+}
+
+.daylist-shell button.bg-blue-600:hover {
+  background-color: var(--neon);
+  color: var(--ink);
+}
+
+.daylist-shell button.bg-amber-100 {
+  border: 1px solid var(--ink);
+}
+
+.daylist-shell [role="group"] button[aria-pressed="true"] {
+  border: 1px solid var(--ink);
+  background-color: var(--neon);
+  color: var(--ink);
+  box-shadow: none;
+}
+
+.daylist-shell input {
+  border-color: var(--line);
+  border-radius: 2px;
+  background-color: var(--paper-raised);
+  color: var(--ink);
+}
+
+.daylist-shell input:focus {
+  border-color: var(--ink);
+  --tw-ring-color: var(--neon);
+}
+
 .calendar-wrapper {
   min-width: 0;
-  font-size: 0.875rem;
+  color: var(--ink);
+  font-family: "Courier New", Courier, monospace;
 }
 
-.calendar-wrapper .fc .fc-toolbar {
-  gap: 0.75rem;
-  flex-wrap: wrap;
-}
-
-.calendar-wrapper .fc .fc-toolbar-title {
-  font-size: 1.1rem;
-  font-weight: 700;
-}
-
-.calendar-wrapper .fc .fc-button {
-  background: #2563eb;
-  border-color: #2563eb;
-  box-shadow: none;
-  text-transform: capitalize;
-}
-
-.calendar-wrapper .fc .fc-button:hover {
-  background: #1d4ed8;
-  border-color: #1d4ed8;
-}
-
-.calendar-wrapper .fc .fc-button:focus {
-  box-shadow: 0 0 0 2px #bfdbfe;
-}
-
-.calendar-wrapper .fc .fc-button-primary:disabled {
-  background: #94a3b8;
-  border-color: #94a3b8;
-}
-
-.calendar-wrapper .fc .fc-daygrid-day-number {
-  padding: 8px;
-}
-
-.calendar-wrapper .fc .fc-day-today {
-  background: #eff6ff !important;
-}
-
-.calendar-wrapper .fc .fc-event {
-  cursor: pointer;
-  border-radius: 4px;
-  padding: 2px 4px;
-}
-
-@media (max-width: 640px) {
-  .calendar-wrapper .fc .fc-toolbar {
-    flex-direction: column;
-    align-items: flex-start;
-  }
-
-  .calendar-wrapper .fc .fc-toolbar-title {
-    font-size: 1rem;
-  }
-
-  .calendar-wrapper .fc .fc-button {
-    padding: 0.3rem 0.45rem;
-    font-size: 0.75rem;
-  }
-}
-
-.calendar-wrapper {
-  min-width: 0;
-  color: #0f172a;
-  font-size: 0.875rem;
-}
-
-.calendar-wrapper .fc {
-  --fc-border-color: #e2e8f0;
-  --fc-today-bg-color: #eff6ff;
-  --fc-page-bg-color: #ffffff;
-  font-family: Arial, Helvetica, sans-serif;
-}
-
-.calendar-wrapper .fc .fc-toolbar {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  gap: 12px;
-}
-
-.calendar-wrapper .fc .fc-toolbar-title {
-  font-size: 1.25rem;
-  font-weight: 700;
-}
-
-.calendar-wrapper .fc .fc-button {
-  border-color: #2563eb;
-  background: #2563eb;
-  box-shadow: none;
-  text-transform: capitalize;
-}
-
-.calendar-wrapper .fc .fc-button:hover {
-  border-color: #1d4ed8;
-  background: #1d4ed8;
-}
-
-.calendar-wrapper .fc .fc-button:focus {
-  box-shadow: 0 0 0 3px #bfdbfe;
-}
-
-.calendar-wrapper .fc .fc-daygrid-day-number {
-  padding: 8px;
+.calendar-wrapper .fc-classic-n5m {
+  font-family: "Courier New", Courier, monospace;
 }
 
 .calendar-wrapper .fc-current-week {
-  background-color: #f1f5f9;
+  background-color: var(--neon) !important;
+  color: var(--ink);
 }
 
-.calendar-wrapper .fc .fc-event {
-  padding: 2px 4px;
-  border-radius: 4px;
-  cursor: pointer;
+.calendar-wrapper .fc-classic-hbn {
+  background-color: var(--neon);
+}
+
+.calendar-wrapper .fc button {
+  border-radius: 2px;
 }
 
 @media (max-width: 640px) {
-  .calendar-wrapper .fc .fc-toolbar {
-    flex-direction: column;
-    align-items: flex-start;
-  }
-
-  .calendar-wrapper .fc .fc-toolbar-title {
-    font-size: 1rem;
+  .calendar-wrapper {
+    font-size: 0.8rem;
   }
 }
