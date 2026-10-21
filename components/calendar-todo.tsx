@@ -19,8 +19,10 @@ import {
   CalendarDays,
   CheckCircle2,
   Circle,
+  Minus,
   Plus,
   Share2,
+  Target,
   Trash2,
 } from "lucide-react";
 
@@ -29,7 +31,20 @@ type Task = {
   title: string;
   date: string;
   completed: boolean;
+  startDate?: string;
+  endDate?: string;
+  targetCount?: number;
+  progressCount?: number;
 };
+
+type GoalTask = Task & {
+  startDate: string;
+  endDate: string;
+  targetCount: number;
+  progressCount: number;
+};
+
+type TaskMode = "task" | "goal";
 
 const TASKS_STORAGE_KEY = "daylist-tasks";
 const subscribe = () => () => {};
@@ -42,6 +57,19 @@ function getLocalDate(date = new Date()) {
   const day = String(date.getDate()).padStart(2, "0");
 
   return `${year}-${month}-${day}`;
+}
+
+function getMonthEndDate(date: string) {
+  const parsedDate = new Date(`${date}T12:00:00`);
+  return getLocalDate(
+    new Date(parsedDate.getFullYear(), parsedDate.getMonth() + 1, 0, 12)
+  );
+}
+
+function getDayAfterDate(date: string) {
+  const nextDate = new Date(`${date}T12:00:00`);
+  nextDate.setDate(nextDate.getDate() + 1);
+  return getLocalDate(nextDate);
 }
 
 function formatDate(date: string) {
@@ -63,11 +91,35 @@ function isTask(value: unknown): value is Task {
   if (typeof value !== "object" || value === null) return false;
 
   const task = value as Record<string, unknown>;
+  const hasGoalData =
+    task.startDate !== undefined ||
+    task.endDate !== undefined ||
+    task.targetCount !== undefined ||
+    task.progressCount !== undefined;
+
   return (
     typeof task.id === "string" &&
     typeof task.title === "string" &&
     typeof task.date === "string" &&
-    typeof task.completed === "boolean"
+    typeof task.completed === "boolean" &&
+    (!hasGoalData ||
+      (typeof task.startDate === "string" &&
+        typeof task.endDate === "string" &&
+        typeof task.targetCount === "number" &&
+        Number.isInteger(task.targetCount) &&
+        task.targetCount > 0 &&
+        typeof task.progressCount === "number" &&
+        Number.isInteger(task.progressCount) &&
+        task.progressCount >= 0))
+  );
+}
+
+function isGoalTask(task: Task): task is GoalTask {
+  return (
+    typeof task.startDate === "string" &&
+    typeof task.endDate === "string" &&
+    typeof task.targetCount === "number" &&
+    typeof task.progressCount === "number"
   );
 }
 
@@ -129,6 +181,12 @@ export default function CalendarTodo() {
   const [selectedDate, setSelectedDate] = useState(today);
   const [title, setTitle] = useState("");
   const [taskDate, setTaskDate] = useState(today);
+  const [taskMode, setTaskMode] = useState<TaskMode>("task");
+  const [goalStartDate, setGoalStartDate] = useState(today);
+  const [goalEndDate, setGoalEndDate] = useState(() =>
+    today ? getMonthEndDate(today) : ""
+  );
+  const [goalTarget, setGoalTarget] = useState("10");
   const [showForm, setShowForm] = useState(false);
   const [showCalendar, setShowCalendar] = useState(false);
 
@@ -143,25 +201,55 @@ export default function CalendarTodo() {
   }, [hydrated, tasks]);
 
   const selectedTasks = useMemo(
-    () => tasks.filter((task) => task.date === selectedDate),
+    () =>
+      tasks.filter((task) =>
+        isGoalTask(task)
+          ? selectedDate >= task.startDate && selectedDate <= task.endDate
+          : task.date === selectedDate
+      ),
     [tasks, selectedDate]
   );
 
   const completedCount = selectedTasks.filter(
-    (task) => task.completed
+    (task) =>
+      isGoalTask(task)
+        ? task.progressCount >= task.targetCount
+        : task.completed
   ).length;
 
   const events = useMemo(
     () =>
-      tasks.map((task) => ({
-        id: task.id,
-        title: `${task.completed ? "✓ " : ""}${task.title}`,
-        start: task.date,
-        allDay: true,
-        backgroundColor: task.completed ? "#dcfce7" : "#dbeafe",
-        borderColor: task.completed ? "#86efac" : "#93c5fd",
-        textColor: task.completed ? "#166534" : "#1d4ed8",
-      })),
+      tasks.map((task) => {
+        const goalTask = isGoalTask(task);
+        const completed = goalTask
+          ? task.progressCount >= task.targetCount
+          : task.completed;
+
+        return {
+          id: task.id,
+          title: goalTask
+            ? `${completed ? "✓ " : ""}${task.title} (${task.progressCount}/${task.targetCount})`
+            : `${completed ? "✓ " : ""}${task.title}`,
+          start: goalTask ? task.startDate : task.date,
+          ...(goalTask ? { end: getDayAfterDate(task.endDate) } : {}),
+          allDay: true,
+          backgroundColor: completed
+            ? "#dcfce7"
+            : goalTask
+              ? "#fef3c7"
+              : "#dbeafe",
+          borderColor: completed
+            ? "#86efac"
+            : goalTask
+              ? "#fcd34d"
+              : "#93c5fd",
+          textColor: completed
+            ? "#166534"
+            : goalTask
+              ? "#92400e"
+              : "#1d4ed8",
+        };
+      }),
     [tasks]
   );
 
@@ -169,7 +257,39 @@ export default function CalendarTodo() {
     event.preventDefault();
 
     const cleanTitle = title.trim();
-    if (!cleanTitle || !taskDate) return;
+    if (!cleanTitle) return;
+
+    if (taskMode === "goal") {
+      const targetCount = Number(goalTarget);
+      if (
+        !goalStartDate ||
+        !goalEndDate ||
+        goalEndDate < goalStartDate ||
+        !Number.isInteger(targetCount) ||
+        targetCount < 1
+      ) {
+        return;
+      }
+
+      const goalTask: GoalTask = {
+        id: crypto.randomUUID(),
+        title: cleanTitle,
+        date: goalStartDate,
+        completed: false,
+        startDate: goalStartDate,
+        endDate: goalEndDate,
+        targetCount,
+        progressCount: 0,
+      };
+
+      setTasks((current) => [...current, goalTask]);
+      setSelectedDate(goalStartDate);
+      setTitle("");
+      setShowForm(false);
+      return;
+    }
+
+    if (!taskDate) return;
 
     const newTask: Task = {
       id: crypto.randomUUID(),
@@ -194,6 +314,25 @@ export default function CalendarTodo() {
     );
   }
 
+  function adjustGoalProgress(id: string, amount: number) {
+    setTasks((current) =>
+      current.map((task) => {
+        if (task.id !== id || !isGoalTask(task)) return task;
+
+        const progressCount = Math.max(
+          0,
+          Math.min(task.targetCount, task.progressCount + amount)
+        );
+
+        return {
+          ...task,
+          progressCount,
+          completed: progressCount >= task.targetCount,
+        };
+      })
+    );
+  }
+
   function deleteTask(id: string) {
     setTasks((current) =>
       current.filter((task) => task.id !== id)
@@ -209,11 +348,21 @@ export default function CalendarTodo() {
     if (info.event.startStr) {
       setSelectedDate(info.event.startStr.slice(0, 10));
     }
-    toggleTask(info.event.id);
+    const task = tasks.find((item) => item.id === info.event.id);
+    if (task && isGoalTask(task)) {
+      adjustGoalProgress(task.id, 1);
+    } else {
+      toggleTask(info.event.id);
+    }
   }
 
   function openTaskForm() {
-    setTaskDate(selectedDate || getLocalDate());
+    const startDate = selectedDate || getLocalDate();
+    setTaskMode("task");
+    setTaskDate(startDate);
+    setGoalStartDate(startDate);
+    setGoalEndDate(getMonthEndDate(startDate));
+    setGoalTarget("10");
     setShowForm(true);
   }
 
@@ -323,9 +472,44 @@ export default function CalendarTodo() {
           <section className="rounded-2xl border border-blue-100 bg-white p-5 shadow-sm sm:p-6">
             <h3 className="text-lg font-semibold">Create a task</h3>
 
+            <div
+              role="group"
+              aria-label="Task type"
+              className="mt-4 inline-flex rounded-lg border border-slate-200 bg-slate-50 p-1"
+            >
+              <button
+                type="button"
+                aria-pressed={taskMode === "task"}
+                onClick={() => setTaskMode("task")}
+                className={`rounded-md px-4 py-2 text-sm font-medium ${
+                  taskMode === "task"
+                    ? "bg-white text-slate-900 shadow-sm"
+                    : "text-slate-500 hover:text-slate-900"
+                }`}
+              >
+                Single task
+              </button>
+              <button
+                type="button"
+                aria-pressed={taskMode === "goal"}
+                onClick={() => setTaskMode("goal")}
+                className={`rounded-md px-4 py-2 text-sm font-medium ${
+                  taskMode === "goal"
+                    ? "bg-white text-slate-900 shadow-sm"
+                    : "text-slate-500 hover:text-slate-900"
+                }`}
+              >
+                Count goal
+              </button>
+            </div>
+
             <form
               onSubmit={addTask}
-              className="mt-4 grid gap-4 sm:grid-cols-[minmax(0,1fr)_200px_auto]"
+              className={`mt-4 grid gap-4 ${
+                taskMode === "goal"
+                  ? "sm:grid-cols-2 lg:grid-cols-[minmax(0,1fr)_170px_170px_130px_auto]"
+                  : "sm:grid-cols-[minmax(0,1fr)_200px_auto]"
+              }`}
             >
               <div>
                 <label
@@ -346,22 +530,84 @@ export default function CalendarTodo() {
                 />
               </div>
 
-              <div>
-                <label
-                  htmlFor="task-date"
-                  className="mb-2 block text-sm font-medium"
-                >
-                  Due date
-                </label>
-                <input
-                  id="task-date"
-                  type="date"
-                  value={taskDate}
-                  onChange={(event) => setTaskDate(event.target.value)}
-                  required
-                  className="w-full rounded-xl border border-slate-300 px-4 py-3 outline-none focus:border-blue-500 focus:ring-4 focus:ring-blue-100"
-                />
-              </div>
+              {taskMode === "goal" ? (
+                <>
+                  <div>
+                    <label
+                      htmlFor="goal-start-date"
+                      className="mb-2 block text-sm font-medium"
+                    >
+                      Start date
+                    </label>
+                    <input
+                      id="goal-start-date"
+                      type="date"
+                      value={goalStartDate}
+                      onChange={(event) =>
+                        setGoalStartDate(event.target.value)
+                      }
+                      required
+                      className="w-full rounded-xl border border-slate-300 px-3 py-3 outline-none focus:border-blue-500 focus:ring-4 focus:ring-blue-100"
+                    />
+                  </div>
+
+                  <div>
+                    <label
+                      htmlFor="goal-end-date"
+                      className="mb-2 block text-sm font-medium"
+                    >
+                      End date
+                    </label>
+                    <input
+                      id="goal-end-date"
+                      type="date"
+                      min={goalStartDate}
+                      value={goalEndDate}
+                      onChange={(event) =>
+                        setGoalEndDate(event.target.value)
+                      }
+                      required
+                      className="w-full rounded-xl border border-slate-300 px-3 py-3 outline-none focus:border-blue-500 focus:ring-4 focus:ring-blue-100"
+                    />
+                  </div>
+
+                  <div>
+                    <label
+                      htmlFor="goal-target"
+                      className="mb-2 block text-sm font-medium"
+                    >
+                      Target count
+                    </label>
+                    <input
+                      id="goal-target"
+                      type="number"
+                      min="1"
+                      step="1"
+                      value={goalTarget}
+                      onChange={(event) => setGoalTarget(event.target.value)}
+                      required
+                      className="w-full rounded-xl border border-slate-300 px-3 py-3 outline-none focus:border-blue-500 focus:ring-4 focus:ring-blue-100"
+                    />
+                  </div>
+                </>
+              ) : (
+                <div>
+                  <label
+                    htmlFor="task-date"
+                    className="mb-2 block text-sm font-medium"
+                  >
+                    Due date
+                  </label>
+                  <input
+                    id="task-date"
+                    type="date"
+                    value={taskDate}
+                    onChange={(event) => setTaskDate(event.target.value)}
+                    required
+                    className="w-full rounded-xl border border-slate-300 px-4 py-3 outline-none focus:border-blue-500 focus:ring-4 focus:ring-blue-100"
+                  />
+                </div>
+              )}
 
               <div className="flex items-end gap-2">
                 <button
@@ -434,37 +680,104 @@ export default function CalendarTodo() {
                   key={task.id}
                   className="flex items-center gap-3 rounded-xl border border-slate-200 p-4 transition hover:border-slate-300"
                 >
-                  <button
-                    type="button"
-                    onClick={() => toggleTask(task.id)}
-                    aria-label={
-                      task.completed
-                        ? "Mark task incomplete"
-                        : "Mark task complete"
-                    }
-                    className="shrink-0 text-blue-600"
-                  >
-                    {task.completed ? (
-                      <CheckCircle2 size={22} />
-                    ) : (
-                      <Circle size={22} />
-                    )}
-                  </button>
+                  {isGoalTask(task) ? (
+                    <>
+                      <Target
+                        size={22}
+                        aria-hidden="true"
+                        className="shrink-0 text-amber-600"
+                      />
 
-                  <div className="min-w-0 flex-1">
-                    <p
-                      className={`break-words font-medium ${
-                        task.completed
-                          ? "text-slate-400 line-through"
-                          : "text-slate-800"
-                      }`}
-                    >
-                      {task.title}
-                    </p>
-                    <p className="mt-1 text-xs text-slate-500">
-                      {task.completed ? "Completed" : "To do"}
-                    </p>
-                  </div>
+                      <div className="min-w-0 flex-1">
+                        <p
+                          className={`break-words font-medium ${
+                            task.completed
+                              ? "text-slate-400 line-through"
+                              : "text-slate-800"
+                          }`}
+                        >
+                          {task.title}
+                        </p>
+                        <p className="mt-1 text-xs text-slate-500">
+                          {task.progressCount} of {task.targetCount} sessions ·{" "}
+                          {formatDate(task.startDate)} to {formatDate(task.endDate)}
+                        </p>
+                        <div
+                          className="mt-3 h-2 overflow-hidden rounded-full bg-slate-100"
+                          role="progressbar"
+                          aria-label={`${task.title} progress`}
+                          aria-valuemin={0}
+                          aria-valuemax={task.targetCount}
+                          aria-valuenow={task.progressCount}
+                        >
+                          <div
+                            className="h-full rounded-full bg-amber-500 transition-all"
+                            style={{
+                              width: `${Math.min(
+                                100,
+                                (task.progressCount / task.targetCount) * 100
+                              )}%`,
+                            }}
+                          />
+                        </div>
+                      </div>
+
+                      <div className="flex shrink-0 items-center gap-1">
+                        <button
+                          type="button"
+                          onClick={() => adjustGoalProgress(task.id, -1)}
+                          disabled={task.progressCount === 0}
+                          aria-label={`Decrease ${task.title} progress`}
+                          className="rounded-lg p-2 text-slate-500 hover:bg-slate-100 disabled:cursor-not-allowed disabled:opacity-40"
+                        >
+                          <Minus size={17} />
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => adjustGoalProgress(task.id, 1)}
+                          disabled={task.progressCount >= task.targetCount}
+                          aria-label={`Record ${task.title}`}
+                          className="rounded-lg bg-amber-100 p-2 text-amber-800 hover:bg-amber-200 disabled:cursor-not-allowed disabled:opacity-40"
+                        >
+                          <Plus size={17} />
+                        </button>
+                      </div>
+                    </>
+                  ) : (
+                    <>
+                      <button
+                        type="button"
+                        onClick={() => toggleTask(task.id)}
+                        aria-label={
+                          task.completed
+                            ? "Mark task incomplete"
+                            : "Mark task complete"
+                        }
+                        className="shrink-0 text-blue-600"
+                      >
+                        {task.completed ? (
+                          <CheckCircle2 size={22} />
+                        ) : (
+                          <Circle size={22} />
+                        )}
+                      </button>
+
+                      <div className="min-w-0 flex-1">
+                        <p
+                          className={`break-words font-medium ${
+                            task.completed
+                              ? "text-slate-400 line-through"
+                              : "text-slate-800"
+                          }`}
+                        >
+                          {task.title}
+                        </p>
+                        <p className="mt-1 text-xs text-slate-500">
+                          {task.completed ? "Completed" : "To do"}
+                        </p>
+                      </div>
+                    </>
+                  )}
 
                   <button
                     type="button"
