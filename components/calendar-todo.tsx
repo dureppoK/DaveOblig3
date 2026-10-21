@@ -1,7 +1,12 @@
 
 "use client";
 
-import { useMemo, useState, useSyncExternalStore } from "react";
+import {
+  useEffect,
+  useMemo,
+  useState,
+  useSyncExternalStore,
+} from "react";
 import FullCalendar from "@fullcalendar/react";
 import classicThemePlugin from "@fullcalendar/react/themes/classic";
 import dayGridPlugin from "@fullcalendar/react/daygrid";
@@ -26,6 +31,7 @@ type Task = {
   completed: boolean;
 };
 
+const TASKS_STORAGE_KEY = "daylist-tasks";
 const subscribe = () => () => {};
 const getClientSnapshot = () => true;
 const getServerSnapshot = () => false;
@@ -53,6 +59,61 @@ function formatDate(date: string) {
   );
 }
 
+function isTask(value: unknown): value is Task {
+  if (typeof value !== "object" || value === null) return false;
+
+  const task = value as Record<string, unknown>;
+  return (
+    typeof task.id === "string" &&
+    typeof task.title === "string" &&
+    typeof task.date === "string" &&
+    typeof task.completed === "boolean"
+  );
+}
+
+function createInitialTasks(today: string): Task[] {
+  if (!today) return [];
+
+  return [
+    {
+      id: "1",
+      title: "Plan the project",
+      date: today,
+      completed: true,
+    },
+    {
+      id: "2",
+      title: "Design the calendar interface",
+      date: today,
+      completed: false,
+    },
+    {
+      id: "3",
+      title: "Review next week's schedule",
+      date: getLocalDate(new Date(Date.now() + 86400000)),
+      completed: false,
+    },
+  ];
+}
+
+function loadTasks(today: string): Task[] {
+  if (!today) return [];
+
+  try {
+    const storedTasks = localStorage.getItem(TASKS_STORAGE_KEY);
+    if (storedTasks !== null) {
+      const parsedTasks: unknown = JSON.parse(storedTasks);
+      if (Array.isArray(parsedTasks)) {
+        return parsedTasks.filter(isTask);
+      }
+    }
+  } catch {
+    return createInitialTasks(today);
+  }
+
+  return createInitialTasks(today);
+}
+
 export default function CalendarTodo() {
   const hydrated = useSyncExternalStore(
     subscribe,
@@ -62,35 +123,24 @@ export default function CalendarTodo() {
   const [today] = useState(() =>
     typeof window === "undefined" ? "" : getLocalDate()
   );
-  const [tasks, setTasks] = useState<Task[]>(() => {
-    if (!today) return [];
-
-    return [
-      {
-        id: "1",
-        title: "Plan the project",
-        date: today,
-        completed: true,
-      },
-      {
-        id: "2",
-        title: "Design the calendar interface",
-        date: today,
-        completed: false,
-      },
-      {
-        id: "3",
-        title: "Set up Supabase",
-        date: getLocalDate(new Date(Date.now() + 86400000)),
-        completed: false,
-      },
-    ];
-  });
+  const [tasks, setTasks] = useState<Task[]>(() =>
+    typeof window === "undefined" ? [] : loadTasks(today)
+  );
   const [selectedDate, setSelectedDate] = useState(today);
   const [title, setTitle] = useState("");
   const [taskDate, setTaskDate] = useState(today);
   const [showForm, setShowForm] = useState(false);
   const [showCalendar, setShowCalendar] = useState(false);
+
+  useEffect(() => {
+    if (!hydrated) return;
+
+    try {
+      localStorage.setItem(TASKS_STORAGE_KEY, JSON.stringify(tasks));
+    } catch {
+      // Keep task interactions available if browser storage is blocked.
+    }
+  }, [hydrated, tasks]);
 
   const selectedTasks = useMemo(
     () => tasks.filter((task) => task.date === selectedDate),
@@ -198,9 +248,7 @@ export default function CalendarTodo() {
 
           <button
             type="button"
-            onClick={() =>
-              alert("Sharing will be added with Supabase.")
-            }
+            onClick={() => alert("Sharing is not available yet.")}
             className="flex items-center gap-2 rounded-xl border border-slate-200 px-4 py-2.5 text-sm font-medium hover:bg-slate-50"
           >
             <Share2 size={17} />
@@ -475,8 +523,7 @@ export default function CalendarTodo() {
         )}
 
         <p className="text-center text-xs text-slate-500">
-          Prototype only · Tasks reset when you refresh the page.
-          Database storage and sharing are not connected yet.
+          Tasks are saved in this browser. Sharing is not available yet.
         </p>
       </div>
     </main>
