@@ -1,26 +1,160 @@
+
+@import "@fullcalendar/react/skeleton.css";
+@import "@fullcalendar/react/themes/classic/theme.css";
+@import "@fullcalendar/react/themes/classic/palette.css";
 @import "tailwindcss";
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  color-scheme: light;
 }
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+* {
+  box-sizing: border-box;
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
+  margin: 0;
+  background: #f8fafc;
   font-family: Arial, Helvetica, sans-serif;
+}
+
+button,
+input {
+  font: inherit;
+}
+
+button {
+  cursor: pointer;
+}
+
+.calendar-wrapper {
+  min-width: 0;
+  font-size: 0.875rem;
+}
+
+.calendar-wrapper .fc .fc-toolbar {
+  gap: 0.75rem;
+  flex-wrap: wrap;
+}
+
+.calendar-wrapper .fc .fc-toolbar-title {
+  font-size: 1.1rem;
+  font-weight: 700;
+}
+
+.calendar-wrapper .fc .fc-button {
+  background: #2563eb;
+  border-color: #2563eb;
+  box-shadow: none;
+  text-transform: capitalize;
+}
+
+.calendar-wrapper .fc .fc-button:hover {
+  background: #1d4ed8;
+  border-color: #1d4ed8;
+}
+
+.calendar-wrapper .fc .fc-button:focus {
+  box-shadow: 0 0 0 2px #bfdbfe;
+}
+
+.calendar-wrapper .fc .fc-button-primary:disabled {
+  background: #94a3b8;
+  border-color: #94a3b8;
+}
+
+.calendar-wrapper .fc .fc-daygrid-day-number {
+  padding: 8px;
+}
+
+.calendar-wrapper .fc .fc-day-today {
+  background: #eff6ff !important;
+}
+
+.calendar-wrapper .fc .fc-event {
+  cursor: pointer;
+  border-radius: 4px;
+  padding: 2px 4px;
+}
+
+@media (max-width: 640px) {
+  .calendar-wrapper .fc .fc-toolbar {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .calendar-wrapper .fc .fc-toolbar-title {
+    font-size: 1rem;
+  }
+
+  .calendar-wrapper .fc .fc-button {
+    padding: 0.3rem 0.45rem;
+    font-size: 0.75rem;
+  }
+}
+
+.calendar-wrapper {
+  min-width: 0;
+  color: #0f172a;
+  font-size: 0.875rem;
+}
+
+.calendar-wrapper .fc {
+  --fc-border-color: #e2e8f0;
+  --fc-today-bg-color: #eff6ff;
+  --fc-page-bg-color: #ffffff;
+  font-family: Arial, Helvetica, sans-serif;
+}
+
+.calendar-wrapper .fc .fc-toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 12px;
+}
+
+.calendar-wrapper .fc .fc-toolbar-title {
+  font-size: 1.25rem;
+  font-weight: 700;
+}
+
+.calendar-wrapper .fc .fc-button {
+  border-color: #2563eb;
+  background: #2563eb;
+  box-shadow: none;
+  text-transform: capitalize;
+}
+
+.calendar-wrapper .fc .fc-button:hover {
+  border-color: #1d4ed8;
+  background: #1d4ed8;
+}
+
+.calendar-wrapper .fc .fc-button:focus {
+  box-shadow: 0 0 0 3px #bfdbfe;
+}
+
+.calendar-wrapper .fc .fc-daygrid-day-number {
+  padding: 8px;
+}
+
+.calendar-wrapper .fc-current-week {
+  background-color: #f1f5f9;
+}
+
+.calendar-wrapper .fc .fc-event {
+  padding: 2px 4px;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+@media (max-width: 640px) {
+  .calendar-wrapper .fc .fc-toolbar {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .calendar-wrapper .fc .fc-toolbar-title {
+    font-size: 1rem;
+  }
 }
