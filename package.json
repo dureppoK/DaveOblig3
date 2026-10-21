@@ -5,7 +5,7 @@
   "homepage": "https://dureppoK.github.io/DaveOblig3",
   "scripts": {
     "predeploy": "npm run build",
-    "deploy": "gh-pages -d out",
+    "deploy": "gh-pages -d out --dotfiles --nojekyll",
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
