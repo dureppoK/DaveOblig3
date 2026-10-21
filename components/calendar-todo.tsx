@@ -475,7 +475,7 @@ export default function CalendarTodo() {
                 onClick={() => setTaskMode("task")}
                 className={`rounded-md px-4 py-2 text-sm font-medium ${
                   taskMode === "task"
-                    ? "bg-white text-slate-900 shadow-sm"
+                    ? "bg-white text-slate-900"
                     : "text-slate-500 hover:text-slate-900"
                 }`}
               >
@@ -487,7 +487,7 @@ export default function CalendarTodo() {
                 onClick={() => setTaskMode("goal")}
                 className={`rounded-md px-4 py-2 text-sm font-medium ${
                   taskMode === "goal"
-                    ? "bg-white text-slate-900 shadow-sm"
+                    ? "bg-white text-slate-900"
                     : "text-slate-500 hover:text-slate-900"
                 }`}
               >

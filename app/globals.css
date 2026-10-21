@@ -113,7 +113,7 @@ button {
 }
 
 .daylist-shell .shadow-sm {
-  box-shadow: none;
+  box-shadow: none !important;
 }
 
 .daylist-shell section {
@@ -169,7 +169,11 @@ button {
   border: 1px dashed var(--ink);
   background-color: var(--neon);
   color: var(--ink);
-  box-shadow: none;
+  box-shadow: none !important;
+}
+
+.daylist-shell [role="group"] button {
+  box-shadow: none !important;
 }
 
 .daylist-shell input {
@@ -181,7 +185,10 @@ button {
 
 .daylist-shell input:focus {
   border-color: var(--ink);
-  --tw-ring-color: var(--neon);
+  outline: 2px dashed var(--ink);
+  outline-offset: 2px;
+  box-shadow: none !important;
+  --tw-ring-color: transparent;
 }
 
 .calendar-wrapper {
