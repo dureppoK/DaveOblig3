@@ -371,8 +371,8 @@ export default function CalendarTodo() {
 
   return (
     <main className="daylist-shell min-h-screen bg-slate-50 text-slate-900">
-      <header className="border-b border-slate-200 bg-white">
-        <div className="mx-auto flex max-w-6xl items-center justify-between px-5 py-4">
+      <header className="border-b border-slate-200">
+        <div className="mx-auto flex max-w-7xl items-center justify-between px-5 py-4">
           <div className="flex items-center gap-3">
             <div className="rounded-xl bg-blue-600 p-2.5 text-white">
               <CalendarDays size={23} />
@@ -398,7 +398,7 @@ export default function CalendarTodo() {
         </div>
       </header>
 
-      <div className="mx-auto max-w-6xl space-y-6 px-5 py-8">
+      <div className="mx-auto max-w-7xl space-y-6 px-5 py-8">
         <section className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm sm:p-7">
           <div className="flex flex-col justify-between gap-5 sm:flex-row sm:items-end">
             <div>
@@ -670,7 +670,7 @@ export default function CalendarTodo() {
               selectedTasks.map((task) => (
                 <div
                   key={task.id}
-                  className="flex items-center gap-3 rounded-xl border border-slate-200 p-4 transition hover:border-slate-300"
+                  className="daylist-task-row flex items-center gap-3 rounded-xl border border-slate-200 p-4 transition hover:border-slate-300"
                 >
                   {isGoalTask(task) ? (
                     <>

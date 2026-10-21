@@ -5,24 +5,26 @@
 
 :root {
   color-scheme: light;
-  --paper: #f2f2f0;
-  --paper-raised: #f8f8f6;
+  --paper: #e9e9e7;
+  --paper-raised: #ffffff;
   --ink: #111111;
-  --muted: #545451;
-  --line: #222222;
+  --muted: #111111;
+  --line: #111111;
+  --night: #111111;
+  --white: #ffffff;
   --neon: #eaff00;
   --fc-classic-button: var(--ink);
   --fc-classic-button-border: var(--ink);
   --fc-classic-button-strong: var(--neon);
   --fc-classic-button-strong-border: var(--ink);
-  --fc-classic-button-foreground: var(--paper-raised);
+  --fc-classic-button-foreground: var(--white);
   --fc-classic-primary: var(--ink);
-  --fc-classic-primary-foreground: var(--paper-raised);
+  --fc-classic-primary-foreground: var(--white);
   --fc-classic-event: var(--ink);
   --fc-classic-event-contrast: var(--neon);
   --fc-classic-highlight: var(--neon);
   --fc-classic-today: var(--neon);
-  --fc-classic-background: var(--paper-raised);
+  --fc-classic-background: var(--white);
   --fc-classic-faint: #e5e5e2;
   --fc-classic-muted: #d6d6d2;
   --fc-classic-border: var(--line);
@@ -75,40 +77,27 @@ button {
 
 .daylist-shell .text-slate-700,
 .daylist-shell .text-slate-800,
-.daylist-shell .text-slate-900 {
-  color: var(--ink);
-}
-
-.daylist-shell .text-blue-600 {
-  color: var(--ink);
-}
-
-.daylist-shell .bg-blue-600 {
-  background-color: var(--neon);
-  color: var(--ink);
-}
-
-.daylist-shell .bg-slate-50,
-.daylist-shell .bg-white {
-  background-color: var(--paper-raised);
-}
-
-.daylist-shell .bg-blue-50,
-.daylist-shell .border-blue-100 {
-  background-color: var(--paper-raised);
-  border-color: var(--line);
-}
-
-.daylist-shell .bg-amber-100,
-.daylist-shell .bg-amber-200,
-.daylist-shell .bg-amber-500 {
-  background-color: var(--neon);
-}
-
+.daylist-shell .text-slate-900,
+.daylist-shell .text-blue-600,
 .daylist-shell .text-amber-800 {
   color: var(--ink);
 }
 
+.daylist-shell .bg-slate-50,
+.daylist-shell .bg-white,
+.daylist-shell .bg-blue-50 {
+  background-color: var(--paper-raised);
+}
+
+.daylist-shell .bg-blue-600,
+.daylist-shell .bg-amber-100,
+.daylist-shell .bg-amber-200,
+.daylist-shell .bg-amber-500 {
+  background-color: var(--neon);
+  color: var(--ink);
+}
+
+.daylist-shell .border-blue-100,
 .daylist-shell .border-slate-100,
 .daylist-shell .border-slate-200,
 .daylist-shell .border-slate-300 {
@@ -128,19 +117,40 @@ button {
 }
 
 .daylist-shell section {
-  border-color: var(--line);
+  border: 2px dashed var(--line);
   background-color: var(--paper-raised);
   box-shadow: none;
 }
 
+.daylist-shell .daylist-task-row {
+  border: 1px dashed var(--line);
+  background-color: var(--paper-raised);
+}
+
 .daylist-shell header {
-  border-color: var(--line);
-  background-color: var(--paper);
+  border-bottom: 2px dashed var(--neon);
+  background-color: var(--night);
+  color: var(--white);
+}
+
+.daylist-shell header h1,
+.daylist-shell header p {
+  color: var(--white);
+}
+
+.daylist-shell header button {
+  border: 1px dashed var(--white);
+  background-color: var(--night);
+  color: var(--white);
+}
+
+.daylist-shell header button:hover {
+  background-color: var(--neon);
+  color: var(--ink);
 }
 
 .daylist-shell button.bg-blue-600 {
-  border: 1px solid var(--ink);
-  border-radius: 2px;
+  border: 1px dashed var(--ink);
   background-color: var(--ink);
   color: var(--neon);
   box-shadow: none;
@@ -152,20 +162,20 @@ button {
 }
 
 .daylist-shell button.bg-amber-100 {
-  border: 1px solid var(--ink);
+  border: 1px dashed var(--ink);
 }
 
 .daylist-shell [role="group"] button[aria-pressed="true"] {
-  border: 1px solid var(--ink);
+  border: 1px dashed var(--ink);
   background-color: var(--neon);
   color: var(--ink);
   box-shadow: none;
 }
 
 .daylist-shell input {
-  border-color: var(--line);
+  border: 1px dashed var(--line);
   border-radius: 2px;
-  background-color: var(--paper-raised);
+  background-color: var(--white);
   color: var(--ink);
 }
 
@@ -176,12 +186,20 @@ button {
 
 .calendar-wrapper {
   min-width: 0;
+  border: 1px dashed var(--line);
+  padding: 12px;
   color: var(--ink);
   font-family: "Courier New", Courier, monospace;
 }
 
 .calendar-wrapper .fc-classic-n5m {
+  --fc-classic-border-style: dashed;
   font-family: "Courier New", Courier, monospace;
+}
+
+.calendar-wrapper [role="columnheader"],
+.calendar-wrapper [role="cell"] {
+  border-style: dashed !important;
 }
 
 .calendar-wrapper .fc-current-week {
@@ -197,8 +215,27 @@ button {
   border-radius: 2px;
 }
 
+.calendar-wrapper .fc button:disabled {
+  background-color: var(--neon);
+  color: var(--ink);
+  opacity: 1;
+}
+
+@media (min-width: 1024px) {
+  .daylist-shell > header > div,
+  .daylist-shell > div {
+    max-width: 80rem;
+  }
+
+  .daylist-shell > div {
+    padding-top: 3rem;
+    padding-bottom: 3rem;
+  }
+}
+
 @media (max-width: 640px) {
   .calendar-wrapper {
+    padding: 8px;
     font-size: 0.8rem;
   }
 }
