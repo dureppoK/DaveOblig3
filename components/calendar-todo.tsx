@@ -233,12 +233,8 @@ export default function CalendarTodo() {
           start: goalTask ? task.startDate : task.date,
           ...(goalTask ? { end: getDayAfterDate(task.endDate) } : {}),
           allDay: true,
-          backgroundColor: completed
-            ? "#eaff00"
-            : goalTask
-              ? "#eaff00"
-              : "#e5e5e2",
-          borderColor: "#222222",
+          backgroundColor: "#ffffff",
+          borderColor: "#111111",
           textColor: "#111111",
         };
       }),

@@ -20,8 +20,8 @@
   --fc-classic-button-foreground: var(--white);
   --fc-classic-primary: var(--ink);
   --fc-classic-primary-foreground: var(--white);
-  --fc-classic-event: var(--ink);
-  --fc-classic-event-contrast: var(--neon);
+  --fc-classic-event: var(--white);
+  --fc-classic-event-contrast: var(--ink);
   --fc-classic-highlight: var(--neon);
   --fc-classic-today: var(--neon);
   --fc-classic-background: var(--white);
