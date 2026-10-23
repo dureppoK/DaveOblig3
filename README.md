@@ -1,4 +1,4 @@
-[project URL] (https://dureppoK.github.io/DaveOblig3/)
+[project URL](https://dureppoK.github.io/DaveOblig3/)
 
 This project is about time management and repeatable tasks and an option to keep track of the progress being made. 
 The goal for this app is that the user can manage there chores, and the app should also be able to share the plan with others.
