@@ -1,47 +1,7 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+[project URL] (https://dureppoK.github.io/DaveOblig3/)
 
-## Getting Started
+This project is about time management and repeatable tasks and an option to keep track of the progress being made. 
+The goal for this app is that the user can manage there chores, and the app should also be able to share the plan with others.
 
-First, run the development server:
-
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
-
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
-
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
-
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
-
-## Learn More
-
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
-
-## Deploy to GitHub Pages
-
-This project uses Next.js static export and publishes the generated `out/` folder to the `gh-pages` branch.
-
-1. Push the project to GitHub.
-2. In the repository, open **Settings → Pages**.
-3. Set the source to **Deploy from a branch**, then choose `gh-pages` and `/ (root)`.
-4. From the project folder, run `npm run deploy`.
-
-The `predeploy` script builds the site first. The project URL is `https://dureppoK.github.io/DaveOblig3/`.
+We brainstormed with AI about the functionalities in the app. We started out using chat got luna 5.6 (free version) to set up the environment for the project. Later switched to GitHub-Copilot because chat gpt set up got more errors and an integrated model with direct access to code base was better. 
+Key details; Both tested the dynamically ourselves and Copilot used Playwright to test the work also. Switch too MCP server cause of the integrated AI model in the IDE VSCode. The app is a SPA used NEXT js framework. Crossed checked the source code with multiple agents to ensure better code  
